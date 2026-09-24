@@ -1,0 +1,7 @@
+node_modules/
+downloads/
+*.tmp
+.DS_Store
+
+# 本次会话遗留的一次性探针，已废弃，可安全删除
+e2e-probe.mjs
