@@ -8,7 +8,7 @@ import { afterEach, test } from 'node:test'
 import {
   canonicalPaperId, checkedPaperId, downloadPaper, getPaper, getRelatedResources, isValidPaperId,
   matchesQuery, normalizePaper, outputDirectory, portableFilename, readPaper, resetApiBaseCache, searchPapers
-} from './papers.mjs'
+} from './dist/papers.js'
 
 const originalFetch = globalThis.fetch
 const originalEnv = { ...process.env }

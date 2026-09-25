@@ -6,7 +6,7 @@ import path from 'node:path'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 
-export const VERSION = '1.2.0'
+export const VERSION = '1.0.0' as const
 
 const DEFAULT_API_BASE = 'https://huggingface.co/api'
 // huggingface.co 在部分网络下不可直连（超时/被阻断），此时自动回退到镜像。
@@ -86,12 +86,16 @@ function apiUrl(base, pathname, params = {}) {
 }
 
 function requestHeaders(accept, authenticated = true) {
-  const headers = { Accept: accept, 'User-Agent': `chattyplay-paper-mcp/${VERSION}` }
+  const headers: Record<string, string> = { Accept: accept, 'User-Agent': `chattyplay-paper-mcp/${VERSION}` }
   if (authenticated && process.env.HF_TOKEN) headers.Authorization = `Bearer ${process.env.HF_TOKEN}`
   return headers
 }
 
-function fetchWithTimeout(url, { headers, timeout = apiTimeout(), redirect } = {}) {
+function fetchWithTimeout(url, { headers, timeout = apiTimeout(), redirect }: {
+  headers?: HeadersInit
+  timeout?: number
+  redirect?: RequestRedirect
+} = {}) {
   return fetch(url, { headers, redirect, signal: AbortSignal.timeout(timeout) })
 }
 
@@ -291,7 +295,15 @@ function paperList(data) {
  * 关键词搜索走 /papers/search（该端点没有 offset，且 limit 上限为 120），
  * 因此多取一条用于判断 hasMore；带日期/周/月筛选时走 Daily Papers。
  */
-export async function searchPapers({ query, date, week, month, sort = 'publishedAt', limit = 20, page = 0 } = {}) {
+export async function searchPapers({ query, date, week, month, sort = 'publishedAt', limit = 20, page = 0 }: {
+  query?: string
+  date?: string
+  week?: string
+  month?: string
+  sort?: string
+  limit?: number
+  page?: number
+} = {}) {
   const normalizedQuery = query?.trim()
   const hasPeriod = Boolean(date || week || month)
   if (normalizedQuery && !hasPeriod) return searchByQuery(normalizedQuery, { limit, page })
@@ -353,11 +365,16 @@ function normalizeResource(item, type) {
 /** 三类资源并行查询，单类失败时保留其余结果并在 warnings 里说明原因。 */
 export async function getRelatedResources(id, limit = 10) {
   const paperId = checkedPaperId(id)
-  const types = ['models', 'datasets', 'spaces']
+  const types = ['models', 'datasets', 'spaces'] as const
   const settled = await Promise.allSettled(
     types.map((type) => getJson(`/${type}`, { filter: `arxiv:${paperId}`, limit }))
   )
-  const output = { models: [], datasets: [], spaces: [], warnings: [] }
+  const output = {
+    models: [] as ReturnType<typeof normalizeResource>[],
+    datasets: [] as ReturnType<typeof normalizeResource>[],
+    spaces: [] as ReturnType<typeof normalizeResource>[],
+    warnings: [] as string[]
+  }
 
   settled.forEach((result, index) => {
     const type = types[index]
@@ -469,15 +486,14 @@ async function commitPdf(temporary, target, overwrite) {
       if (existing.isSymbolicLink()) throw new Error('拒绝覆盖符号链接')
       replaced = true
     } catch (error) {
-      if (error?.code !== 'ENOENT') throw error
+      if ((error as NodeJS.ErrnoException)?.code !== 'ENOENT') throw error
     }
     // rename 会替换目录项本身而不会跟随符号链接，并避免暴露部分写入的最终文件。
     await rename(temporary, target)
     return replaced
   } catch (error) {
-    if (error?.code === 'EEXIST') {
-      const conflict = new Error(`文件已存在，未覆盖：${target}；如需替换请设置 overwrite=true`)
-      conflict.code = TARGET_EXISTS
+    if ((error as NodeJS.ErrnoException)?.code === 'EEXIST') {
+      const conflict = Object.assign(new Error(`文件已存在，未覆盖：${target}；如需替换请设置 overwrite=true`), { code: TARGET_EXISTS })
       throw conflict
     }
     throw error
@@ -490,7 +506,12 @@ async function commitPdf(temporary, target, overwrite) {
  * 下载 arXiv PDF 到本机。按候选源依次尝试，先写入临时文件校验，再复制到目标路径；
  * 默认不覆盖已有文件，任何失败都会清理临时文件。
  */
-export async function downloadPaper({ id: value, directory, filename, overwrite = false }) {
+export async function downloadPaper({ id: value, directory, filename, overwrite = false }: {
+  id?: string
+  directory?: string
+  filename?: string
+  overwrite?: boolean
+}) {
   const id = checkedPaperId(value)
   const targetDirectory = outputDirectory(directory)
   const target = path.join(targetDirectory, portableFilename(filename, id))
@@ -498,7 +519,7 @@ export async function downloadPaper({ id: value, directory, filename, overwrite 
 
   await mkdir(targetDirectory, { recursive: true })
 
-  const failures = []
+  const failures: string[] = []
   for (const sourceUrl of sources) {
     const temporary = path.join(targetDirectory, `.${path.basename(target)}.${randomUUID()}.tmp`)
     try {

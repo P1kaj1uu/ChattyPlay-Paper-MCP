@@ -49,9 +49,9 @@ npm start
 
 ## MCP 客户端配置
 
-服务使用标准 `stdio` 传输。下面把 `/abs/path/to/ChattyPlay-Paper-MCP/index.mjs` 换成你机器上 `index.mjs` 的**绝对路径**。
+服务使用标准 `stdio` 传输。`npm install` 会自动把 TypeScript 编译到 `dist/`。下面把 `/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js` 换成你机器上该文件的**绝对路径**。
 
-> Windows：JSON 里反斜杠要转义成 `\\`，例如 `C:\\Users\\me\\ChattyPlay-Paper-MCP\\index.mjs`；也可以统一写成正斜杠 `C:/Users/me/...`。macOS/Linux 用 `/Users/...` 或 `/home/...`。
+> Windows：JSON 里反斜杠要转义成 `\\`，例如 `C:\\Users\\me\\ChattyPlay-Paper-MCP\\dist\\index.js`；也可以统一写成正斜杠 `C:/Users/me/...`。macOS/Linux 用 `/Users/...` 或 `/home/...`。
 > 始终把 `node` 和脚本路径拆成两个数组元素，不要拼成一条命令 —— 这样带空格的路径（`C:\Program Files\...`）也不会出问题。
 
 ### Claude Desktop
@@ -63,7 +63,7 @@ npm start
   "mcpServers": {
     "chattyplay-paper": {
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"]
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"]
     }
   }
 }
@@ -72,7 +72,7 @@ npm start
 ### Claude Code
 
 ```bash
-claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.mjs
+claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/dist/index.js
 ```
 
 也可以写进项目根目录的 `.mcp.json`，结构同上面的 `mcpServers`。
@@ -86,7 +86,7 @@ claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.
   "mcpServers": {
     "chattyplay-paper": {
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"]
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"]
     }
   }
 }
@@ -102,7 +102,7 @@ claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.
     "chattyplay-paper": {
       "type": "stdio",
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"]
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"]
     }
   }
 }
@@ -117,7 +117,7 @@ claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.
   "mcpServers": {
     "chattyplay-paper": {
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"]
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"]
     }
   }
 }
@@ -132,7 +132,7 @@ claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.
   "mcpServers": {
     "chattyplay-paper": {
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"],
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"],
       "disabled": false,
       "autoApprove": []
     }
@@ -143,7 +143,7 @@ claude mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.
 ### Codex CLI
 
 ```bash
-codex mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.mjs
+codex mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/dist/index.js
 ```
 
 或写进 `~/.codex/config.toml`：
@@ -151,7 +151,7 @@ codex mcp add chattyplay-paper -- node /abs/path/to/ChattyPlay-Paper-MCP/index.m
 ```toml
 [mcp_servers.chattyplay-paper]
 command = "node"
-args = ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"]
+args = ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"]
 ```
 
 TOML 里不要转义反斜杠以外的字符；Windows 路径同样建议写正斜杠。
@@ -165,7 +165,7 @@ TOML 里不要转义反斜杠以外的字符；Windows 路径同样建议写正�
   "mcpServers": {
     "chattyplay-paper": {
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"]
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"]
     }
   }
 }
@@ -180,7 +180,7 @@ TOML 里不要转义反斜杠以外的字符；Windows 路径同样建议写正�
   "mcpServers": {
     "chattyplay-paper": {
       "command": "node",
-      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/index.mjs"],
+      "args": ["/abs/path/to/ChattyPlay-Paper-MCP/dist/index.js"],
       "env": {
         "HF_TOKEN": "hf_xxx"
       }

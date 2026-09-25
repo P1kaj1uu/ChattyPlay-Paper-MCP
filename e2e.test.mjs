@@ -1,4 +1,4 @@
-// 真实网络端到端冒烟测试：验证 index.mjs 的 stdio MCP 层、各工具与 PDF 下载。
+// 真实网络端到端冒烟测试：验证编译后的 stdio MCP 层、各工具与 PDF 下载。
 // 默认 npm test 不包含它，因为需要联网；单独跑：npm run test:e2e
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
@@ -9,7 +9,7 @@ import { createInterface } from 'node:readline'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-const serverPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'index.mjs')
+const serverPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'dist/index.js')
 
 function connect(env) {
   const child = spawn(process.execPath, [serverPath], {

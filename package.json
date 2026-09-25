@@ -7,12 +7,18 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "node index.mjs",
-    "test": "node --test papers.test.mjs server.test.mjs",
-    "test:e2e": "node --test e2e.test.mjs"
+    "build": "tsc",
+    "prepare": "npm run build",
+    "start": "node dist/index.js",
+    "test": "npm run build && node --test papers.test.mjs server.test.mjs",
+    "test:e2e": "npm run build && node --test e2e.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "^2.0.0",
     "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "typescript": "^5.9.3"
   }
 }

@@ -5,7 +5,7 @@ import { createInterface } from 'node:readline'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-const serverPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'index.mjs')
+const serverPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'dist/index.js')
 
 test('serves tools and validation errors over stdio without network access', { timeout: 10_000 }, async (t) => {
   const child = spawn(process.execPath, [serverPath], { stdio: ['pipe', 'pipe', 'pipe'] })
